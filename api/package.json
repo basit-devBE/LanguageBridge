@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "nodemon server.ts",
-    "build": "npx tsc",
+    "prepare": "npm install",
+   "build": "npm run prepare && tsc",
     "start": "node dist/server.js"
   },
   "keywords": [],
@@ -20,7 +21,7 @@
     "express": "^5.1.0",
     "multer": "^2.0.2",
     "typescript": "^5.8.3",
-      "@types/express": "^5.0.3",
+    "@types/express": "^5.0.3",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.0.15"
 
