@@ -1,13 +1,12 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "nodemon server.ts",
-    "prepare": "npm install",
-    "build": "npx tsc",
-    "start": "node dist/server.js"
+    "build": "echo 'No build step required'",
+    "start": "node -r ts-node/register server.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,21 +15,17 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.848.0",
     "@types/aws-sdk": "^0.0.42",
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.0.15",
     "aws-sdk": "^2.1692.0",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "multer": "^2.0.2",
-    "typescript": "^5.8.3",
-    "@types/express": "^5.0.3",
-    "@types/multer": "^2.0.0",
-    "@types/node": "^24.0.15"
-
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "@types/express": "^5.0.3",
-    "@types/multer": "^2.0.0",
-    "@types/node": "^24.0.15",
-    "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2"
+    "nodemon": "^3.1.10"
   }
 }
