@@ -135,6 +135,81 @@ export const uploadFile = async (filename: string): Promise<AWS.S3.ManagedUpload
     }
 }
 
+// NEW: Add translation-specific upload function
+export const uploadTranslationRequest = async (
+    translationData: any,
+    requestId: string
+): Promise<AWS.S3.ManagedUpload.SendData> => {
+    console.log(`\n=== Starting translation request upload: ${requestId} ===`);
+    
+    try {
+        const params: AWS.S3.PutObjectRequest = {
+            Bucket: process.env.AWS_S3_BUCKET_NAME!,
+            Key: `requests/${requestId}_${Date.now()}.json`,
+            Body: JSON.stringify(translationData, null, 2),
+            ContentType: 'application/json',
+            Metadata: {
+                'request-type': 'translation',
+                'request-id': requestId
+            }
+        };
+
+        console.log("Translation upload parameters:", {
+            Bucket: params.Bucket,
+            Key: params.Key,
+            ContentType: params.ContentType
+        });
+
+        const result = await s3.upload(params).promise();
+        console.log('✓ Translation request uploaded successfully:', result.Key);
+        
+        return result;
+
+    } catch (error) {
+        console.error('✗ Error uploading translation request:', error);
+        throw error;
+    }
+}
+
+// NEW: Get translation result
+export const getTranslationResult = async (requestId: string): Promise<any | null> => {
+    try {
+        console.log(`Checking for translation result: ${requestId}`);
+        
+        const listParams = {
+            Bucket: process.env.AWS_S3_BUCKET_NAME!,
+            Prefix: `responses/${requestId}`
+        };
+
+        const objects = await s3.listObjectsV2(listParams).promise();
+        
+        if (!objects.Contents || objects.Contents.length === 0) {
+            console.log('No translation result found yet');
+            return null;
+        }
+
+        // Get the most recent result
+        const latestObject = objects.Contents.sort((a, b) => 
+            (b.LastModified?.getTime() || 0) - (a.LastModified?.getTime() || 0)
+        )[0];
+
+        const getParams = {
+            Bucket: process.env.AWS_S3_BUCKET_NAME!,
+            Key: latestObject.Key!
+        };
+
+        const result = await s3.getObject(getParams).promise();
+        const translationResult = JSON.parse(result.Body?.toString() || '{}');
+        
+        console.log('✓ Translation result found:', translationResult.status);
+        return translationResult;
+
+    } catch (error) {
+        console.error('✗ Error getting translation result:', error);
+        return null;
+    }
+}
+
 // Add a test function to verify AWS connection
 export const testAWSConnection = async (): Promise<boolean> => {
     try {
