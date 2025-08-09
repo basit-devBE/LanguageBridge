@@ -1,0 +1,8 @@
+{
+  "httpMethod": "POST",
+  "path": "/translate/text",
+  "body": "{\"text\":\"Hello\",\"sourceLang\":\"en\",\"targetLang\":\"es\",\"waitForResult\":false}",
+  "headers": {
+    "Content-Type": "application/json"
+  }
+}

@@ -99,9 +99,12 @@ export const translateFileHandler = async (req: Request, res: Response) => {
     try {
         const { sourceLanguage = 'auto', targetLanguage = 'en', waitForResult = true } = req.body;
         
-        // Read file content
-        const filePath = path.resolve(process.cwd(), 'uploads', file.filename);
+        // Read file content - use the direct file path from the upload
+        const filePath = file.path || path.resolve(process.cwd(), 'uploads', file.filename);
         let textContent = '';
+
+        console.log(`Reading file from: ${filePath}`);
+        console.log(`File exists: ${fs.existsSync(filePath)}`);
 
         if (file.mimetype === 'application/json') {
             const fileContent = JSON.parse(fs.readFileSync(filePath, 'utf-8'));

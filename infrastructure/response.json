@@ -1,0 +1,1 @@
+{"statusCode":202,"headers":{"Content-Type":"application/json","Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"Content-Type","Access-Control-Allow-Methods":"GET, POST, OPTIONS"},"body":"{\"message\":\"Translation request submitted successfully\",\"requestId\":\"2ac394a1-f4aa-4671-9f63-42d83439370d\",\"status\":\"processing\"}"}

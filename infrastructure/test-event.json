@@ -1,0 +1,10 @@
+{
+  "httpMethod": "POST",
+  "path": "/translate/text",
+  "body": "{\"text\":\"Hello\",\"targetLanguage\":\"es\"}",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "pathParameters": {},
+  "queryStringParameters": {}
+}

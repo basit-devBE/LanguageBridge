@@ -5,27 +5,45 @@ import AWS from 'aws-sdk'
 
 dotenv.config()
 
-// Validate required environment variables
-const requiredEnvVars = {
-    AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
-    AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
-    AWS_REGION: process.env.AWS_REGION,
-    AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME
-};
+// Check if running in Lambda environment
+const isLambda = !!process.env.LAMBDA_RUNTIME_DIR;
 
-console.log('Environment variables check:');
-for (const [key, value] of Object.entries(requiredEnvVars)) {
-    console.log(`${key}: ${value ? '✓ Set' : '✗ Missing'}`);
-    if (!value) {
-        throw new Error(`Missing required environment variable: ${key}`);
+if (isLambda) {
+    // In Lambda, use IAM role credentials automatically
+    console.log('Running in Lambda environment, using IAM role credentials');
+    
+    // Only validate required S3 bucket name
+    if (!process.env.AWS_S3_BUCKET_NAME) {
+        throw new Error('Missing required environment variable: AWS_S3_BUCKET_NAME');
     }
-}
+    
+    // Lambda automatically sets AWS_REGION, but we can override it
+    AWS.config.update({
+        region: process.env.AWS_REGION || 'eu-north-1'
+    });
+} else {
+    // In local development, validate explicit credentials
+    const requiredEnvVars = {
+        AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
+        AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+        AWS_REGION: process.env.AWS_REGION,
+        AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME
+    };
 
-AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION
-})
+    console.log('Environment variables check:');
+    for (const [key, value] of Object.entries(requiredEnvVars)) {
+        console.log(`${key}: ${value ? '✓ Set' : '✗ Missing'}`);
+        if (!value) {
+            throw new Error(`Missing required environment variable: ${key}`);
+        }
+    }
+
+    AWS.config.update({
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        region: process.env.AWS_REGION
+    });
+}
 
 const s3 = new AWS.S3();
 
